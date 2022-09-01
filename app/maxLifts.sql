@@ -34,3 +34,10 @@ CREATE TABLE `max_lifts`.`one_rep_maximums` (
 );
 
 
+INSERT INTO `max_lifts`.`exercises` (`name`)
+VALUES 
+    ("Benchpress"),
+    ("Squat");
+
+
+
