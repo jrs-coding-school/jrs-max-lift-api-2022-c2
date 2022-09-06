@@ -6,15 +6,13 @@ module.exports = (app) => {
         res.send("not implemented :(")
     });
 
+    app.post('/api/users', users.createNewUser);
+    app.post('/api/users/login', users.login);
 
-    // POST  /api/users  ->  create new user
-    // POST  /api/users/login  ->  login
+    app.get('/api/users/:username', users.getUserByUsername);
 
-    // GET  /api/users  ->  get all users
-    // GET  /api/users/:email  ->  get user by id
+    app.put('/api/users/:id', users.updateUser);
 
-    // PUT  /api/users/:id  ->  update user
-
-    // DELTE  /api/users/:id  ->  delete account
+    app.delete('/api/users', users.deleteAccount);
 
 }
