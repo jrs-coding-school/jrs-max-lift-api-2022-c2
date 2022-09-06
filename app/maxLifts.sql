@@ -36,11 +36,11 @@ CREATE TABLE `max_lifts`.`one_rep_maximums` (
 INSERT INTO `max_lifts`.`users` 
     (`id`, `username`, `password`, `height`, `weight`, `age`, `gender`)
 VALUES 
-    ('a66a7494-29ff-11ed-bd1e-c93bcd52340c', "Eric", "pass1", 74, 225, 41, 'm'),
-    ('a66a75f2-29ff-11ed-bd1e-c93bcd52340c', "Jeremiah", "pass2", 69, 165, 27, 'm'),
-    ('a66a7692-29ff-11ed-bd1e-c93bcd52340c', "Ford", "pass3", 68, 225, 32, 'm'),
-    ('a66a76e2-29ff-11ed-bd1e-c93bcd52340c', "Chris", "pass4", 65, 225, 50, 'm'),
-    ('a66a7732-29ff-11ed-bd1e-c93bcd52340c', "Will", "pass5", 70, 215, 24, 'm')
+    ('a66a7494-29ff-11ed-bd1e-c93bcd52340c', "Eric", "$2b$10$MKfiK/42iw9IbenZDbI8ju3sMKXL6QHhdwTK1k/szVP7xAK1goLnu", 74, 225, 41, 'm'),
+    ('a66a75f2-29ff-11ed-bd1e-c93bcd52340c', "Jeremiah", "$2b$10$.SEiCIiMMvUi6qZO5BpLOu8WJZ6BS3CCW.DpUlZW.ZPK7kdYj8wNK", 69, 165, 27, 'm'),
+    ('a66a7692-29ff-11ed-bd1e-c93bcd52340c', "Ford", "$2b$10$tgA6XtGlOF65wwfaVUE8VubqXFv5kL6vTO5uJE1OoyK.dPQIcK2xu", 68, 225, 32, 'm'),
+    ('a66a76e2-29ff-11ed-bd1e-c93bcd52340c', "Chris", "$2b$10$SDDW7s.tLkN5iGYbTgNYWuneH3acLUrZQo1awnrz55Qa7e8fyIp1C", 65, 225, 50, 'm'),
+    ('a66a7732-29ff-11ed-bd1e-c93bcd52340c', "Will", "$2b$10$FMf75OTubXaxBiVn3OdMv.WEg/x5ojr3G.e.tBq9poezyAukWQTtO", 70, 215, 24, 'm')
 ;
 
 INSERT INTO `max_lifts`.`exercises` (`name`)
