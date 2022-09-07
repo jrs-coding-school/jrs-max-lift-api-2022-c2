@@ -9,24 +9,24 @@ module.exports = (app) => {
     app.post('/api/orms', orms.createNewOrm);
 
     // GET  /api/orms  ->  get all orms
-    app.post('/api/orms', orms.getAllOrms);
+    app.get('/api/orms', orms.getAllOrms);
 
     // GET  /api/orms/user/:userId  ->  get full history
-    app.post('/api/orms/user/:userId', orms.getFullHistory);
+    app.get('/api/orms/user/:userId', orms.getFullHistory);
 
     // GET  /api/orms/user/:userId/recent  ->  get all prs to date
-    app.post('/api/orms', orms.getAllPrs);
+    app.get('/api/orms', orms.getAllPrs);
 
     // GET  /api/orms/user/:userId/recent/:exerciseId  ->  get most recent for just one exercise
-    app.post('/api/orms/user/:userId/recent/:exerciseId', orms.getRecentForExercise);
+    app.get('/api/orms/user/:userId/recent/:exerciseId', orms.getRecentForExercise);
 
     // GET  /api/orms/user/:userId/exercise/:exerciseId  ->  get exercise history
-    app.post('/api/orms/user/:userId/exercise/:exerciseId', orms.getExerciseHistory);
+    app.get('/api/orms/user/:userId/exercise/:exerciseId', orms.getExerciseHistory);
 
     // PUT  /api/orms/:id  ->  update orm
-    app.post('/api/orms/:id', orms.updateOrm);
+    app.put('/api/orms/:id', orms.updateOrm);
 
     // DELETE  /api/orms/:id  ->  delete orm
-    app.post('/api/orms/:id', orms.deleteOrm);
+    app.delete('/api/orms/:id', orms.deleteOrm);
 
 }

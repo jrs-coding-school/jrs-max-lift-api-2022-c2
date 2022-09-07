@@ -80,8 +80,8 @@ exports.createNewUser = async (req, res) => {
 
     const query = `
         INSERT INTO users
-            (id, username, password)
-            VALUES (?, ?, ?);
+            (id, username, password, height, weight, age, gender)
+            VALUES (?, ?, ?, ?, ?, ?, ?);
     `;
     const placeholders = [uuid(), username, encryptedPassword];
 
@@ -108,13 +108,64 @@ exports.createNewUser = async (req, res) => {
 }
 
 exports.getUserByUsername = (req, res) => {
-    res.send("not implemented");
+    let { id } = req.params;
+
+    const query = `
+        SELECT * FROM users
+        WHERE id = ?;
+    `;
+
+    let pvalues = [id];
+
+    db.query(query, pvalues, (err, results) => {
+        if (err) {
+            res.status(500).send({
+                error: err,
+                message: "There was an error finding your username."
+            });
+            return;
+        } else if (results.length == 0) {
+            res.status(404).send({
+                message: "Could not locate a user with this id."
+            })
+            return;
+        } else {
+            res.send(results[0]);
+            return;
+        }
+    });
 }
 
+// not sure we need this function
 exports.updateUser = (req, res) => {
     res.send("not implemented");
 }
 
 exports.deleteAccount = (req, res) => {
-    res.send("not implemented");
+    const { id } = req.params;
+
+    const script = `
+        DELETE FROM users
+            WHERE id = ?;
+    `
+
+    const pValues = [id];
+
+    db.query(script, pValues, (err, results) => {
+        if (err) {
+            res.status(500).send({
+                message: 'There was a problem deleting your user profile',
+                err
+            })
+        } else if (results.affectedRows == 0) {
+            res.status(404).send({
+                message: 'No users found with this name.',
+                id
+            });
+        } else {
+            res.send({
+                message: "User profile deleted successfully"
+            })
+        }
+    });
 }
