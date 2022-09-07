@@ -43,37 +43,32 @@ exports.createNewOrm = (req, res) => {
     })
 }
 
-exports.getAllOrms = (req, res) => {
+exports.getUsersFullHistory = (req, res) => {
 
-    const { user_id } = req.body;
+    const { userId } = req.params;
+    console.log(userId)
 
-    // const script = `
-    //     SELECT * FROM max_lifts.one_rep_maximums
-    //     WHERE (user_id = ?);
-    // `
-    const script = `
+    let script = `
         SELECT 
-            max_lifts.exersises.name AS name, 
-            max_lifts.one_rep_maximums.max_weight AS max_weight,
-            max_lifts.one_rep_maximums.date AS date
-        FROM max_lifts.exersises
+            one_rep_maximums.id, exercise_id, name, max_weight, date
+        FROM exercises
+        INNER JOIN one_rep_maximums
+            ON exercises.id = one_rep_maximums.exercise_id
         WHERE (user_id = ?)
-        CENTER JOIN max_lifts.one_rep_maximums
-        ON max_lifts.exersises.id = max_lifts.one_rep_maximums.exercise_id
-        ORDER BY max_lifts.one_rep_maximums.date DESC;
+        ORDER BY one_rep_maximums.date DESC;
     `
 
-    db.query(script, [user_id], (err, results) => {
-        if (results.length == 0) {
-            res.status(404).send(
-                'There are no saved lifts'
-            )
-            return;
-        } else if (err) {
+    db.query(script, [userId], (err, results) => {
+        if (err) {
             res.status(500).send({
                 message: 'There was an error getting the on rep maximums',
                 err
             })
+            return;
+        } else if (results.length == 0) {
+            res.status(404).send(
+                'There are no saved lifts'
+            )
             return;
         } else {
             res.send({
@@ -84,29 +79,30 @@ exports.getAllOrms = (req, res) => {
     })
 }
 
-// how is this different from get all Orms? are we saving all rep maxes?
-// we don't have a spot for # of reps in the database
-exports.getFullHistory = (req, res) => {
-    res.send("not implimented yet")
-}
-
 
 exports.getAllPrs = (req, res) => {
 
-    const { user_id } = req.body;
+    const { userId } = req.params;
+    console.log(userId)
 
     let script = `
-        SELECT 
-            max_lifts.exersises.name AS name, 
-            MAX(max_lifts.one_rep_maximums.max_weight) AS max_weight
-        FROM max_lifts.exersises
-        WHERE (user_id = ?)
-        CENTER JOIN max_lifts.one_rep_maximums
-        ON max_lifts.exersises.id = max_lifts.one_rep_maximums.exercise_id
-        ORDER BY max_lifts.one_rep_maximums.date DESC;
+        SELECT t1.id, t1.exercise_id, exercises.name, t1.max_weight, t1.date
+        FROM one_rep_maximums as t1
+        LEFT JOIN one_rep_maximums as t2
+            ON t1.exercise_id = t2.exercise_id
+            AND t1.max_weight < t2.max_weight
+            AND t1.user_id = t2.user_id
+        
+        INNER JOIN exercises
+            ON exercises.id = t1.exercise_id
+        
+        WHERE t1.user_id = ?
+            AND t2.id IS  NULL
+        
+        ORDER BY t1.date DESC;
     `
 
-    db.query(script, [user_id], (err, results) => {
+    db.query(script, [userId], (err, results) => {
         if (err) {
             res.status(500).send({
                 message: "There was an error getting your PRs"
@@ -127,23 +123,30 @@ exports.getAllPrs = (req, res) => {
 
 
 // GROUP BY excercise? Does this satisfy?
-exports.getRecentForExercise = (req, res) => {
-    let { user_id } = req.body;
+exports.getPrForOneExercise = (req, res) => {
+    let { userId, exerciseId } = req.params;
+    console.log("getting one pr", req.params)
 
     let script = `
-        SELECT 
-            max_lifts.exersises.name AS name, 
-            max_lifts.one_rep_maximums.max_weight AS max_weight,
-            MAX(max_lifts.one_rep_maximums.date)
-        FROM max_lifts.exersises
-        WHERE (user_id = ?)
-        CENTER JOIN max_lifts.one_rep_maximums
-        ON max_lifts.exersises.id = max_lifts.one_rep_maximums.exercise_id
-        GROUP BY name
-        ORDER BY date DESC;
+        SELECT t1.id, t1.exercise_id, exercises.name, t1.max_weight, t1.date
+        FROM one_rep_maximums as t1
+        LEFT JOIN one_rep_maximums as t2
+            ON t1.exercise_id = t2.exercise_id
+            AND t1.max_weight < t2.max_weight
+            AND t1.user_id = t2.user_id
+        
+        INNER JOIN exercises
+            ON exercises.id = t1.exercise_id
+        
+        WHERE t1.user_id = ?
+            AND t2.id IS  NULL
+            AND t1.exercise_id = ?
+        
+        ORDER BY t1.date DESC;
     `
 
-    db.query(script, [user_id], (err, results) => {
+    db.query(script, [userId, exerciseId], (err, results) => {
+        console.log(err, results)
         if (err) {
             res.status(500).send({
                 message: 'There was an error getting your recent one rep maximums',
@@ -162,25 +165,26 @@ exports.getRecentForExercise = (req, res) => {
 }
 
 exports.getExerciseHistory = (req, res) => {
-    let { user_id } = req.body;
+    let { userId, exerciseId } = req.params;
 
     let script = `
         SELECT 
-            max_lifts.exersises.name AS name, 
-            max_lifts.one_rep_maximums.max_weight AS max_weight,
-            max_lifts.one_rep_maximums.date AS date
-        FROM max_lifts.exersises
-        WHERE (user_id = ?)
-        CENTER JOIN max_lifts.one_rep_maximums
-        ON max_lifts.exersises.id = max_lifts.one_rep_maximums.exercise_id
-        ORDER BY date DESC;
+            one_rep_maximums.id, exercise_id, name, max_weight, date
+        FROM exercises
+        INNER JOIN one_rep_maximums
+            ON exercises.id = one_rep_maximums.exercise_id
+        WHERE user_id = ?
+            AND exercise_id = ?
+        ORDER BY one_rep_maximums.date DESC;
     `
 
-    db.query(script, [user_id], (err, results) => {
+    let pValues = [userId, exerciseId];
+
+    db.query(script, pValues, (err, results) => {
         if (err) {
             res.status(500).send({
-                message: 'There was an error getting your recent one rep maximums',
-                err
+                message: 'There was an error getting your recent one rep maximums for this exercise',
+                user_id, exercise_id
             })
         } else if (results.length == 0) {
             res.status(404).send({
@@ -196,7 +200,8 @@ exports.getExerciseHistory = (req, res) => {
 
 // not sure if i did this right
 exports.updateOrm = (req, res) => {
-    var { id, user_id, exercise_id, max_weight, date } = req.body;
+    var { userId, max_weight, date } = req.body;
+    var { id } = req.params;
 
 
     // This means you can change the max_weight and the date but not the excersize
@@ -217,7 +222,7 @@ exports.updateOrm = (req, res) => {
             return;
         } else if (results.length == 0) {
             res.status(404).send({
-                message: 'No exersises to update found',
+                message: 'No exercises to update found',
                 user_id
             })
             return;
@@ -229,7 +234,7 @@ exports.updateOrm = (req, res) => {
 }
 
 exports.deleteOrm = (req, res) => {
-    let { user_id, id } = req.body;
+    let { id } = req.params;
 
     let script = `
         DELETE FROM max_lifts.one_rep_maximums
@@ -245,8 +250,7 @@ exports.deleteOrm = (req, res) => {
             return;
         } else if (results.length == 0) {
             res.status(404).send({
-                message: 'No exersises to delete found',
-                user_id
+                message: 'No exercises to delete found'
             })
             return;
         } else {

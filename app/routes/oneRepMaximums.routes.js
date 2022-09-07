@@ -9,18 +9,18 @@ module.exports = (app) => {
     app.post('/api/orms', orms.createNewOrm);
 
     // GET  /api/orms  ->  get all orms
-    app.get('/api/orms', orms.getAllOrms);
+    // app.get('/api/orms', orms.getAllOrms);
 
     // GET  /api/orms/user/:userId  ->  get full history
-    app.get('/api/orms/user/:userId', orms.getFullHistory);
+    app.get('/api/orms/user/:userId', orms.getUsersFullHistory);
 
     // GET  /api/orms/user/:userId/recent  ->  get all prs to date
-    app.get('/api/orms', orms.getAllPrs);
+    app.get('/api/orms/user/:userId/recent', orms.getAllPrs);
 
-    // GET  /api/orms/user/:userId/recent/:exerciseId  ->  get most recent for just one exercise
-    app.get('/api/orms/user/:userId/recent/:exerciseId', orms.getRecentForExercise);
+    // GET  /api/orms/user/:userId/recent/:exerciseId  ->  get most recent pr for just one exercise (one data point)
+    app.get('/api/orms/user/:userId/recent/:exerciseId', orms.getPrForOneExercise);
 
-    // GET  /api/orms/user/:userId/exercise/:exerciseId  ->  get exercise history
+    // GET  /api/orms/user/:userId/exercise/:exerciseId  ->  get full history for one exercise
     app.get('/api/orms/user/:userId/exercise/:exerciseId', orms.getExerciseHistory);
 
     // PUT  /api/orms/:id  ->  update orm
