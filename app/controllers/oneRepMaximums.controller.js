@@ -2,10 +2,10 @@ const db = require('../index');
 const { v4: uuid } = require('uuid');
 
 exports.createNewOrm = (req, res) => {
-    var { user_id, exercise_id, max_weight, date } = req.body;
+    var { userId, exerciseId, max_weight, date } = req.body;
 
-    if ((typeof user_id != 'string')
-        || (typeof exercise_id != 'string')
+    if ((typeof userId != 'string')
+        || (typeof exerciseId != 'string')
         || (typeof max_weight != 'number')
         || (typeof date != 'string')) {
         res.status(400).send({
@@ -24,7 +24,7 @@ exports.createNewOrm = (req, res) => {
             (?, ?, ?, ?, ?);
     `
 
-    let pValues = [id, user_id, exercise_id, max_weight, date]
+    let pValues = [id, userId, exerciseId, max_weight, date]
 
     db.query(script, pValues, (err, results) => {
         if (err) {
@@ -71,9 +71,7 @@ exports.getUsersFullHistory = (req, res) => {
             )
             return;
         } else {
-            res.send({
-                results
-            })
+            res.send(results)
             return;
         }
     })
@@ -111,7 +109,7 @@ exports.getAllPrs = (req, res) => {
         } else if (results.length == 0) {
             res.status(404).send({
                 message: "No PRs found for this user",
-                user_id
+                userId
             })
             return;
         } else {
@@ -155,7 +153,7 @@ exports.getPrForOneExercise = (req, res) => {
         } else if (results.length == 0) {
             res.status(404).send({
                 message: 'No recent one rep maximums found for this user',
-                user_id
+                userId
             })
         } else {
             res.send(results)
@@ -184,12 +182,12 @@ exports.getExerciseHistory = (req, res) => {
         if (err) {
             res.status(500).send({
                 message: 'There was an error getting your recent one rep maximums for this exercise',
-                user_id, exercise_id
+                userId, exerciseId
             })
         } else if (results.length == 0) {
             res.status(404).send({
                 message: 'No recent one rep maximums found for this user',
-                user_id
+                userId
             })
         } else {
             res.send(results)
@@ -223,7 +221,7 @@ exports.updateOrm = (req, res) => {
         } else if (results.length == 0) {
             res.status(404).send({
                 message: 'No exercises to update found',
-                user_id
+                userId
             })
             return;
         } else {
