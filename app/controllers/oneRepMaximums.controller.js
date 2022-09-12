@@ -4,10 +4,11 @@ const { v4: uuid } = require('uuid');
 exports.createNewOrm = (req, res) => {
     var { userId, exerciseId, max_weight, date } = req.body;
 
-    if ((typeof userId != 'string')
-        || (typeof exerciseId != 'string')
-        || (typeof max_weight != 'number')
-        || (typeof date != 'string')) {
+
+    if ((typeof userId !== 'string')
+        || (typeof exerciseId !== 'string')
+        || (typeof max_weight !== 'number')
+        || (typeof date !== 'string')) {
         res.status(400).send({
             message: "You are missing required data",
             body: req.body
@@ -15,16 +16,16 @@ exports.createNewOrm = (req, res) => {
         return;
     }
 
-    const id = uuid();
+    // const id = uuid();
 
     const script = `
         INSERT INTO max_lifts.one_rep_maximums
-            (id, user_id, exercise_id, max_weight, date)
+            (user_id, exercise_id, max_weight, date)
         VALUES
-            (?, ?, ?, ?, ?);
+            (?, ?, ?, ?);
     `
 
-    let pValues = [id, userId, exerciseId, max_weight, date]
+    let pValues = [userId, exerciseId, max_weight, date]
 
     db.query(script, pValues, (err, results) => {
         if (err) {
@@ -35,8 +36,7 @@ exports.createNewOrm = (req, res) => {
             return;
         } else {
             res.send({
-                message: 'Your one rep max was saved in the database',
-                id
+                message: 'Your one rep max was saved in the database'
             })
             return;
         }
