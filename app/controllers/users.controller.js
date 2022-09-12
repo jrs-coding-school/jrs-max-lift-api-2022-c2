@@ -48,10 +48,7 @@ exports.login = (req, res) => {
 
                 let user = results[0];
 
-                res.send({
-                    message: "You have successfully logged in.",
-                    user
-                });
+                res.send(user);
             } else {
                 res.status(404)
                     .send({
