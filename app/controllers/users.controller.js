@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { v4: uuid } = require('uuid');
 const saltRounds = 10;
 
+
 exports.login = (req, res) => {
 
     const { username, password } = req.body;
@@ -19,12 +20,12 @@ exports.login = (req, res) => {
         SELECT * FROM users 
             WHERE username = ?;
     `;
+
     const placeholders = [username];
 
     db.query(query, placeholders, async (err, results) => {
 
         if (err) {
-            // case #3
             res.status(500)
                 .send({
                     message: "There was an error logging in. Please try again.",
@@ -32,7 +33,6 @@ exports.login = (req, res) => {
                 });
             return;
         } else if (results.length == 0) {
-            // case #2
             res.status(404)
                 .send({
                     message: "username or Password was incorrect."
@@ -44,7 +44,6 @@ exports.login = (req, res) => {
             const passwordMatched = await bcrypt.compare(password, encryptedPassword);
 
             if (passwordMatched) {
-                // successful login
 
                 let user = results[0];
 
@@ -57,15 +56,14 @@ exports.login = (req, res) => {
             }
         }
     });
-
 }
 
+// TODO: fix the mismatch of placeholders to VALUES "?"
 exports.createNewUser = async (req, res) => {
 
     let { username, password } = req.body;
 
     if (!username || !password) {
-        // client error
         res.status(400)
             .send({
                 message: "username or password was not defined."
@@ -80,6 +78,7 @@ exports.createNewUser = async (req, res) => {
             (id, username, password, height, weight, age, gender)
             VALUES (?, ?, ?, ?, ?, ?, ?);
     `;
+
     const placeholders = [uuid(), username, encryptedPassword];
 
     db.query(query, placeholders, (err, results) => {
@@ -98,13 +97,14 @@ exports.createNewUser = async (req, res) => {
                     });
             }
         } else {
-            // success
             this.login(req, res);
         }
     });
 }
 
+// TODO: make this by username and not by id
 exports.getUserByUsername = (req, res) => {
+
     let { id } = req.params;
 
     const query = `
@@ -133,12 +133,13 @@ exports.getUserByUsername = (req, res) => {
     });
 }
 
-// not sure we need this function
+// TODO: either implement or delete
 exports.updateUser = (req, res) => {
     res.send("not implemented");
 }
 
 exports.deleteAccount = (req, res) => {
+
     const { id } = req.params;
 
     const script = `

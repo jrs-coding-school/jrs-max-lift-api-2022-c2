@@ -1,9 +1,9 @@
 const db = require('../index');
-const { v4: uuid } = require('uuid');
 
+// TODO: date needs to be a timestamp
 exports.createNewOrm = (req, res) => {
-    var { userId, exerciseId, max_weight, date } = req.body;
 
+    var { userId, exerciseId, max_weight, date } = req.body;
 
     if ((typeof userId !== 'string')
         || (typeof exerciseId !== 'string')
@@ -15,8 +15,6 @@ exports.createNewOrm = (req, res) => {
         })
         return;
     }
-
-    // const id = uuid();
 
     const script = `
         INSERT INTO max_lifts.one_rep_maximums
@@ -46,7 +44,6 @@ exports.createNewOrm = (req, res) => {
 exports.getUsersFullHistory = (req, res) => {
 
     const { userId } = req.params;
-    console.log(userId)
 
     let script = `
         SELECT 
@@ -77,11 +74,9 @@ exports.getUsersFullHistory = (req, res) => {
     })
 }
 
-
 exports.getAllPrs = (req, res) => {
 
     const { userId } = req.params;
-    console.log(userId)
 
     let script = `
         SELECT t1.id, t1.exercise_id, exercises.name, t1.max_weight, t1.date
@@ -119,11 +114,9 @@ exports.getAllPrs = (req, res) => {
     })
 }
 
-
-// GROUP BY excercise? Does this satisfy?
 exports.getPrForOneExercise = (req, res) => {
+
     let { userId, exerciseId } = req.params;
-    console.log("getting one pr", req.params)
 
     let script = `
         SELECT t1.id, t1.exercise_id, exercises.name, t1.max_weight, t1.date
@@ -144,7 +137,7 @@ exports.getPrForOneExercise = (req, res) => {
     `
 
     db.query(script, [userId, exerciseId], (err, results) => {
-        console.log(err, results)
+
         if (err) {
             res.status(500).send({
                 message: 'There was an error getting your recent one rep maximums',
@@ -163,6 +156,7 @@ exports.getPrForOneExercise = (req, res) => {
 }
 
 exports.getExerciseHistory = (req, res) => {
+
     let { userId, exerciseId } = req.params;
 
     let script = `
@@ -196,7 +190,7 @@ exports.getExerciseHistory = (req, res) => {
     })
 }
 
-// not sure if i did this right
+// TODO: fix this
 exports.updateOrm = (req, res) => {
     var { userId, max_weight, date } = req.body;
     var { id } = req.params;
@@ -220,8 +214,7 @@ exports.updateOrm = (req, res) => {
             return;
         } else if (results.length == 0) {
             res.status(404).send({
-                message: 'No exercises to update found',
-                userId
+                message: 'No exercises to update found'
             })
             return;
         } else {
@@ -231,7 +224,9 @@ exports.updateOrm = (req, res) => {
     })
 }
 
+// TODO: Test this and maybe fix
 exports.deleteOrm = (req, res) => {
+
     let { id } = req.params;
 
     let script = `

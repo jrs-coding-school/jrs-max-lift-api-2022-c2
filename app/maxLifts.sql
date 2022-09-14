@@ -26,7 +26,7 @@ CREATE TABLE `max_lifts`.`one_rep_maximums` (
     `user_id` VARCHAR(45) NOT NULL,
     `exercise_id` INT NOT NULL,
     `max_weight` INT NOT NULL,
-    `date` VARCHAR(11) NOT NULL,
+    `date` VARCHAR(11) NOT NULL, -- YYYY-MM-DD
 
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
@@ -124,6 +124,3 @@ VALUES
     ('a66a7732-29ff-11ed-bd1e-c93bcd52340c', 2, 195, '2022-01-27'),
     ('a66a7732-29ff-11ed-bd1e-c93bcd52340c', 2, 205, '2022-05-22')
 ;
-
-
-
