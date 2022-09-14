@@ -3,11 +3,11 @@ const db = require('../index');
 // TODO: date needs to be a timestamp
 exports.createNewOrm = (req, res) => {
 
-    var { userId, exerciseId, max_weight, date } = req.body;
+    var { userId, exerciseId, maxWeight, date } = req.body;
 
     if ((typeof userId !== 'string')
         || (typeof exerciseId !== 'string')
-        || (typeof max_weight !== 'number')
+        || (typeof maxWeight !== 'number')
         || (typeof date !== 'string')) {
         res.status(400).send({
             message: "You are missing required data",
@@ -23,7 +23,7 @@ exports.createNewOrm = (req, res) => {
             (?, ?, ?, ?);
     `
 
-    let pValues = [userId, exerciseId, max_weight, date]
+    let pValues = [userId, exerciseId, maxWeight, date]
 
     db.query(script, pValues, (err, results) => {
         if (err) {
@@ -47,7 +47,7 @@ exports.getUsersFullHistory = (req, res) => {
 
     let script = `
         SELECT 
-            one_rep_maximums.id, exercise_id, name, max_weight, date
+            one_rep_maximums.id, exercise_id, name, max_weight as maxWeight, date
         FROM exercises
         INNER JOIN one_rep_maximums
             ON exercises.id = one_rep_maximums.exercise_id
@@ -79,7 +79,7 @@ exports.getAllPrs = (req, res) => {
     const { userId } = req.params;
 
     let script = `
-        SELECT t1.id, t1.exercise_id, exercises.name, t1.max_weight, t1.date
+        SELECT t1.id, t1.exercise_id, exercises.name, t1.max_weight as maxWeight, t1.date
         FROM one_rep_maximums as t1
         LEFT JOIN one_rep_maximums as t2
             ON t1.exercise_id = t2.exercise_id
@@ -119,7 +119,7 @@ exports.getPrForOneExercise = (req, res) => {
     let { userId, exerciseId } = req.params;
 
     let script = `
-        SELECT t1.id, t1.exercise_id, exercises.name, t1.max_weight, t1.date
+        SELECT t1.id, t1.exercise_id, exercises.name, t1.max_weight as maxWeight, t1.date
         FROM one_rep_maximums as t1
         LEFT JOIN one_rep_maximums as t2
             ON t1.exercise_id = t2.exercise_id
@@ -161,7 +161,7 @@ exports.getExerciseHistory = (req, res) => {
 
     let script = `
         SELECT 
-            one_rep_maximums.id, exercise_id, name, max_weight, date
+            one_rep_maximums.id, exercise_id, name, max_weight as maxWeight, date
         FROM exercises
         INNER JOIN one_rep_maximums
             ON exercises.id = one_rep_maximums.exercise_id
@@ -190,20 +190,18 @@ exports.getExerciseHistory = (req, res) => {
     })
 }
 
-// TODO: fix this
+// TODO: fix this. getting 500 error
 exports.updateOrm = (req, res) => {
-    var { userId, max_weight, date } = req.body;
-    var { id } = req.params;
 
+    var { maxWeight, id } = req.body;
 
-    // This means you can change the max_weight and the date but not the excersize
     const script = `
         UPDATE max_lifts.one_rep_maximums
-        SET (max_weight = ?, date = ?)
-        WHERE id = ?
+        SET (max_weight = ?)
+        WHERE (id = ?)
     `
 
-    let pValues = [max_weight, date, id];
+    let pValues = [maxWeight, id];
 
     db.query(script, pValues, (err, results) => {
         if (err) {

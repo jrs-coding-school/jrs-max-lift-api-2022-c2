@@ -8,7 +8,7 @@ module.exports = (app) => {
     app.get('/api/orms/user/:userId/recent/:exerciseId', orms.getPrForOneExercise);
     app.get('/api/orms/user/:userId/exercise/:exerciseId', orms.getExerciseHistory);
 
-    app.put('/api/orms/:id', orms.updateOrm);
+    app.put('/api/orms/', orms.updateOrm);
 
     app.delete('/api/orms/:id', orms.deleteOrm);
 
