@@ -10,7 +10,7 @@ exports.createNewOrm = (req, res) => {
         || (typeof max_weight !== 'number')
         || (typeof date !== 'string')) {
         res.status(400).send({
-            message: "You are missing required data",
+            message: "You are missing required data testing",
             body: req.body
         })
         return;
