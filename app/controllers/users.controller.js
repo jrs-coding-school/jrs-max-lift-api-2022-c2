@@ -61,7 +61,7 @@ exports.login = (req, res) => {
 // TODO: fix the mismatch of placeholders to VALUES "?"
 exports.createNewUser = async (req, res) => {
 
-    let { username, password } = req.body;
+    let { username, password, age, height, weight, sex } = req.body;
 
     if (!username || !password) {
         res.status(400)
@@ -79,7 +79,7 @@ exports.createNewUser = async (req, res) => {
             VALUES (?, ?, ?, ?, ?, ?, ?);
     `;
 
-    const placeholders = [uuid(), username, encryptedPassword];
+    const placeholders = [uuid(), username, encryptedPassword, height, weight, age, sex];
 
     db.query(query, placeholders, (err, results) => {
         if (err) {
