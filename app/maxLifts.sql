@@ -62,8 +62,8 @@ VALUES
     ('Clean'),
     ('Power Snatch'),
     ('Snatch'),
-    ('Pull-up'),
-    ('Push-up')
+    ('Weighted Pull-up'),
+    ('Weighted Push-up')
 ;
 
 INSERT INTO `max_lifts`.`one_rep_maximums`
